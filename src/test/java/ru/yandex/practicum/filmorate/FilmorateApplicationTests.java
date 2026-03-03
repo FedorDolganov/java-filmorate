@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -68,7 +67,7 @@ class FilmorateApplicationTests {
     }
 
     @Test
-    void createUser_InvalidLogin() throws Exception {
+    void createUser_InvalidLogin() {
         User user = User.builder()
                 .login("dolore ullamco")
                 .email("yandex@mail.ru")
@@ -81,7 +80,7 @@ class FilmorateApplicationTests {
     }
 
     @Test
-    void createUser_InvalidEmail() throws Exception {
+    void createUser_InvalidEmail() {
         User user = User.builder()
                 .login("dolore")
                 .email("mail.ru")
@@ -95,7 +94,7 @@ class FilmorateApplicationTests {
     }
 
     @Test
-    void createUser_FutureBirthday() throws Exception {
+    void createUser_FutureBirthday() {
         User user = User.builder()
                 .login("dolore")
                 .email("test@mail.ru")
@@ -235,7 +234,7 @@ class FilmorateApplicationTests {
     }
 
     @Test
-    void createFilm_WithEmptyName() throws Exception {
+    void createFilm_WithEmptyName() {
         Film film = Film.builder()
                 .name("")
                 .description("Description")
@@ -249,7 +248,7 @@ class FilmorateApplicationTests {
     }
 
     @Test
-    void createFilm_WithTooLongDescription_ShouldReturnBadRequest() throws Exception {
+    void createFilm_WithTooLongDescription_ShouldReturnBadRequest() {
         String longDescription = "Пятеро друзей (комик-группа «Шарло»), приезжают в город Бризуль. Здесь они хотят разыскать господина Огюста Куглова, который задолжал им деньги, а именно 20 миллионов. Куглов, который за время «своего отсутствия», стал кандидатом Коломбани.";
 
         Film film = Film.builder()
@@ -265,7 +264,7 @@ class FilmorateApplicationTests {
     }
 
     @Test
-    void createFilm_InvalidReleaseDate() throws Exception {
+    void createFilm_InvalidReleaseDate() {
         Film film = Film.builder()
                 .name("Name")
                 .description("Description")
@@ -279,7 +278,7 @@ class FilmorateApplicationTests {
     }
 
     @Test
-    void createFilm_WithNegativeDuration() throws Exception {
+    void createFilm_WithNegativeDuration() {
         Film film = Film.builder()
                 .name("Name")
                 .description("Description")
