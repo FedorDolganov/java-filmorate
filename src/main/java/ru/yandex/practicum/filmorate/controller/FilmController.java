@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +9,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Random;
 
 @RestController
 @RequestMapping("/films")
@@ -25,7 +25,7 @@ public class FilmController {
     }
 
     @PostMapping
-    public Film filmPostMethod(@Valid @RequestBody Film film) {
+    public Film filmPostMethod(@RequestBody Film film) {
         if (film.getName() == null || film.getName().isBlank()) {
             throw new ValidationException(log, "Неверные данные создания фильма: Неверные данные имени фильма");
         }
@@ -42,14 +42,16 @@ public class FilmController {
             throw new ValidationException(log, "Неверные данные создания фильма: Неверные данные продолжительности фильма");
         }
 
-        film.setId(films.size() + 1);
+        Random random = new Random();
+
+        film.setId(random.nextInt(0, 999_999_999));
         log.info("Добавлен новый фильм {}!", film.getName());
         films.put(film.getId(), film);
         return film;
     }
 
     @PutMapping
-    public Film filmPutMethod(@Valid @RequestBody Film film) {
+    public Film filmPutMethod(@RequestBody Film film) {
         if (films.containsKey(film.getId())) {
             films.put(film.getId(), film);
             log.info("Фильм {} обновлён!", film.getName());

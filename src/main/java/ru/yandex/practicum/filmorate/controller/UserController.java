@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +9,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Random;
 
 @RestController
 @RequestMapping("/users")
@@ -25,7 +25,7 @@ public class UserController {
     }
 
     @PostMapping
-    public User userPostMethod(@Valid @RequestBody User user) {
+    public User userPostMethod(@RequestBody User user) {
         if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
             throw new ValidationException(log, "Неверные данные создания пользователя: Неверные данные почты");
         }
@@ -42,14 +42,16 @@ public class UserController {
             throw new ValidationException(log, "Неверные данные создания пользователя: Неверные данные дня рождения");
         }
 
-        user.setId(users.size() + 1);
+        Random random = new Random();
+
+        user.setId(random.nextInt(0, 999_999_999));
         log.info("Добавлен новый пользователь {}!", user.getName());
         users.put(user.getId(), user);
         return user;
     }
 
     @PutMapping
-    public User userPutMethod(@Valid @RequestBody User user) {
+    public User userPutMethod(@RequestBody User user) {
         if (users.containsKey(user.getId())) {
             users.put(user.getId(), user);
             log.info("Пользователь {} обновлён!", user.getName());
