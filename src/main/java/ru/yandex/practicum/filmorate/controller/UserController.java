@@ -9,7 +9,6 @@ import ru.yandex.practicum.filmorate.model.User;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Random;
 
 @RestController
 @RequestMapping("/users")
@@ -17,6 +16,7 @@ public class UserController {
 
     private final Logger log = LoggerFactory.getLogger(UserController.class);
     private final HashMap<Long, User> users = new HashMap<>();
+    private int lastIndef = 1;
 
 
     @GetMapping
@@ -42,9 +42,8 @@ public class UserController {
             throw new ValidationException(log, "Неверные данные создания пользователя: Неверные данные дня рождения");
         }
 
-        Random random = new Random();
-
-        user.setId(random.nextInt(0, 999_999_999));
+        user.setId(lastIndef);
+        lastIndef++;
         log.info("Добавлен новый пользователь {}!", user.getName());
         users.put(user.getId(), user);
         return user;

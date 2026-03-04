@@ -9,7 +9,6 @@ import ru.yandex.practicum.filmorate.model.Film;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Random;
 
 @RestController
 @RequestMapping("/films")
@@ -17,6 +16,7 @@ public class FilmController {
 
     private final Logger log = LoggerFactory.getLogger(FilmController.class);
     private final HashMap<Long, Film> films = new HashMap<>();
+    private int lastIndef = 1;
 
 
     @GetMapping
@@ -42,9 +42,8 @@ public class FilmController {
             throw new ValidationException(log, "Неверные данные создания фильма: Неверные данные продолжительности фильма");
         }
 
-        Random random = new Random();
-
-        film.setId(random.nextInt(0, 999_999_999));
+        film.setId(lastIndef);
+        lastIndef++;
         log.info("Добавлен новый фильм {}!", film.getName());
         films.put(film.getId(), film);
         return film;
