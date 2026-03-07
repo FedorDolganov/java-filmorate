@@ -8,7 +8,7 @@ import java.util.Set;
 
 @Builder
 @Data
-public class Film implements Comparable<Film>{
+public class Film implements Comparable<Film> {
 
     private long id;
     private String name;
