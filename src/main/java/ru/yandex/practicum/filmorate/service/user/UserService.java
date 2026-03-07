@@ -67,7 +67,7 @@ public class UserService {
             userStorage.updateUser(user.getId(), user);
             return user;
         } else {
-            throw new NotFoundException("Пользователь не найден по указанному ID");
+            throw new ValidationException("Пользователь не найден по указанному ID");
         }
     }
 

@@ -68,7 +68,7 @@ public class FilmService {
             filmStorage.updateFilm(film.getId(), film);
             return film;
         } else {
-            throw new NotFoundException("Фильм не найден по указанному ID");
+            throw new ValidationException("Фильм не найден по указанному ID");
         }
     }
 
