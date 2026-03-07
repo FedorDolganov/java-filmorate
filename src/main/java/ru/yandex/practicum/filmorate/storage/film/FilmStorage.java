@@ -3,7 +3,7 @@ package ru.yandex.practicum.filmorate.storage.film;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.LinkedList;
 
 public interface FilmStorage {
 
@@ -19,7 +19,7 @@ public interface FilmStorage {
 
     void removeLike(long filmId, long userId);
 
-    List<Film> getListFilms(int count);
+    LinkedList<Film> getListFilms(int count);
 
     boolean containsFilm(long filmId);
 

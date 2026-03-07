@@ -1,10 +1,11 @@
 package ru.yandex.practicum.filmorate.service.user;
 
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exeptions.NotFoundException;
-import ru.yandex.practicum.filmorate.exeptions.ValidationException;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
+import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -14,7 +15,7 @@ import java.util.List;
 @Service
 public class UserService {
 
-    private InMemoryUserStorage userStorage;
+    private UserStorage userStorage;
 
     public UserService(InMemoryUserStorage userStorage) {
         this.userStorage = userStorage;
