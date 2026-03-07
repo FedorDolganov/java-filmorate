@@ -75,7 +75,7 @@ class FilmorateApplicationTests {
                 .build();
 
         assertThrows(ValidationException.class, () -> {
-            userController.userPostMethod(user);
+            userController.createUser(user);
         });
     }
 
@@ -89,7 +89,7 @@ class FilmorateApplicationTests {
                 .build();
 
         assertThrows(ValidationException.class, () -> {
-            userController.userPostMethod(user);
+            userController.createUser(user);
         });
     }
 
@@ -103,7 +103,7 @@ class FilmorateApplicationTests {
                 .build();
 
         assertThrows(ValidationException.class, () -> {
-            userController.userPostMethod(user);
+            userController.createUser(user);
         });
     }
 
@@ -170,7 +170,7 @@ class FilmorateApplicationTests {
 
 
         assertThrows(ValidationException.class, () -> {
-            userController.userPutMethod(updateUser);
+            userController.updateUser(updateUser);
         });
     }
 
@@ -243,7 +243,7 @@ class FilmorateApplicationTests {
                 .build();
 
         assertThrows(ValidationException.class, () -> {
-            filmController.filmPostMethod(film);
+            filmController.createFilm(film);
         });
     }
 
@@ -259,7 +259,7 @@ class FilmorateApplicationTests {
                 .build();
 
         assertThrows(ValidationException.class, () -> {
-            filmController.filmPostMethod(film);
+            filmController.createFilm(film);
         });
     }
 
@@ -273,7 +273,7 @@ class FilmorateApplicationTests {
                 .build();
 
         assertThrows(ValidationException.class, () -> {
-            filmController.filmPostMethod(film);
+            filmController.createFilm(film);
         });
     }
 
@@ -287,7 +287,7 @@ class FilmorateApplicationTests {
                 .build();
 
         assertThrows(ValidationException.class, () -> {
-            filmController.filmPostMethod(film);
+            filmController.createFilm(film);
         });
     }
 
@@ -353,7 +353,7 @@ class FilmorateApplicationTests {
                 .build();
 
         assertThrows(ValidationException.class, () -> {
-            filmController.filmPutMethod(updatedFilm);
+            filmController.updateFilm(updatedFilm);
         });
     }
 
