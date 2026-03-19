@@ -16,6 +16,8 @@ public class Film implements Comparable<Film> {
     private LocalDate releaseDate;
     private int duration;
     private Set<Long> likes;
+    private String genre;
+    private String MPA;
 
     @Override
     public int compareTo(Film film) {

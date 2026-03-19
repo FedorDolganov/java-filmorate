@@ -44,6 +44,14 @@ public class FilmService {
             throw new ValidationException("Неверные данные описания фильма");
         }
 
+        if (film.getGenre() == null || film.getGenre().isBlank()) {
+            throw new ValidationException("Неверные данные жанра");
+        }
+
+        if (film.getMPA() == null || film.getMPA().isBlank()) {
+            throw new ValidationException("Неверные данные возратного ограничения");
+        }
+
         if (film.getReleaseDate() == null || film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
             throw new ValidationException("Неверные данные даты релиза фильма");
         }

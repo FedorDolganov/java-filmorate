@@ -9,7 +9,7 @@ import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.time.LocalDate;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -51,7 +51,7 @@ public class UserService {
         }
 
         if (user.getFriends() == null) {
-            user.setFriends(new HashSet<>());
+            user.setFriends(new HashMap<>());
         }
 
         userStorage.addUser(user);
@@ -62,7 +62,7 @@ public class UserService {
     public User updateUser(User user) {
         if (userStorage.containsUser(user.getId())) {
             if (user.getFriends() == null) {
-                user.setFriends(new HashSet<>());
+                user.setFriends(new HashMap<>());
             }
 
             userStorage.updateUser(user.getId(), user);

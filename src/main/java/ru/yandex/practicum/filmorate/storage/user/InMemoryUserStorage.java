@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.enums.FriendConfirmation;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.*;
@@ -38,34 +39,26 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public void addFriend(long userId, long friendId) {
-        Set<Long> friends1 = users.get(userId).getFriends();
+        HashMap<Long, FriendConfirmation> friendFriends = users.get(userId).getFriends();
+        HashMap<Long, FriendConfirmation> friends = users.get(userId).getFriends();
 
-        friends1.add(friendId);
-
-        users.get(userId).setFriends(friends1);
-
-
-        Set<Long> friends2 = users.get(friendId).getFriends();
-
-        friends2.add(userId);
-
-        users.get(friendId).setFriends(friends2);
+        if (friendFriends.containsKey(userId)) {
+            if (friendFriends.get(userId).equals(FriendConfirmation.NOT_CONFIRMED)) {
+                friendFriends.put(userId, FriendConfirmation.CONFIRMED);
+                friends.put(friendId, FriendConfirmation.CONFIRMED);
+            }
+        } else {
+            friends.put(friendId, FriendConfirmation.NOT_CONFIRMED);
+        }
     }
 
     @Override
     public void removeFriend(long userId, long friendId) {
-        Set<Long> friends1 = users.get(userId).getFriends();
+        HashMap<Long, FriendConfirmation> friendFriends = users.get(userId).getFriends();
+        HashMap<Long, FriendConfirmation> friends = users.get(userId).getFriends();
 
-        friends1.remove(friendId);
-
-        users.get(userId).setFriends(friends1);
-
-
-        Set<Long> friends2 = users.get(friendId).getFriends();
-
-        friends2.remove(userId);
-
-        users.get(friendId).setFriends(friends1);
+        friends.remove(friendId);
+        friendFriends.remove(userId);
     }
 
     @Override
@@ -75,14 +68,14 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public boolean containsUserFriend(long userId, long friendId) {
-        return users.get(userId).getFriends().contains(friendId);
+        return users.get(userId).getFriends().containsKey(friendId);
     }
 
     @Override
     public List<User> getAllFriends(long userId) {
         List<User> friends = new ArrayList<>();
 
-        for (long friendId : users.get(userId).getFriends()) {
+        for (long friendId : users.get(userId).getFriends().keySet()) {
             friends.add(users.get(friendId));
         }
 
@@ -93,8 +86,8 @@ public class InMemoryUserStorage implements UserStorage {
     public List<User> getCommonFriends(long userId, long friendId) {
         List<User> commonFriends = new ArrayList<>();
 
-        for (long userFriendId : users.get(userId).getFriends()) {
-            if (users.get(friendId).getFriends().contains(userFriendId)) {
+        for (long userFriendId : users.get(userId).getFriends().keySet()) {
+            if (users.get(friendId).getFriends().containsKey(userFriendId)) {
                 commonFriends.add(users.get(userFriendId));
             }
         }
