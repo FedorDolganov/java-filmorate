@@ -1,35 +1,26 @@
 package ru.yandex.practicum.filmorate.service.user;
 
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserDbStorage;
 
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 @Service
+@AllArgsConstructor
 public class UserService {
 
-    private UserStorage userStorage;
+    private UserDbStorage userStorage;
 
-    public UserService(InMemoryUserStorage userStorage) {
-        this.userStorage = userStorage;
-    }
 
     public Collection<User> getAllUsers() {
         return userStorage.getAllUsers();
     }
 
     public User getUser(long userId) {
-        if (!userStorage.containsUser(userId)) {
-            throw new NotFoundException("Пользователь не найден по указанному ID");
-        }
-
         return userStorage.getUser(userId);
     }
 
@@ -54,32 +45,25 @@ public class UserService {
             user.setFriends(new HashSet<>());
         }
 
-        userStorage.addUser(user);
+        return userStorage.addUser(user);
+    }
+
+    public User updateUser(User user) {
+        User userDB = userStorage.getUser(user.getId());
+
+        if (user.getFriends() == null) {
+            user.setFriends(new HashSet<>());
+        }
+
+        userStorage.updateUser(userDB.getId(), user);
 
         return user;
     }
 
-    public User updateUser(User user) {
-        if (userStorage.containsUser(user.getId())) {
-            if (user.getFriends() == null) {
-                user.setFriends(new HashSet<>());
-            }
-
-            userStorage.updateUser(user.getId(), user);
-            return user;
-        } else {
-            throw new NotFoundException("Пользователь не найден по указанному ID");
-        }
-    }
-
     public User addFriend(long userId, long friendId) {
-        if (!userStorage.containsUser(userId)) {
-            throw new NotFoundException("Пользователь не найден по указанному ID");
-        }
+        userStorage.getUser(userId);
 
-        if (!userStorage.containsUser(friendId)) {
-            throw new NotFoundException("Друг не найден по указанному ID");
-        }
+        userStorage.getUser(friendId);
 
         userStorage.addFriend(userId, friendId);
 
@@ -87,13 +71,9 @@ public class UserService {
     }
 
     public User removeFriend(long userId, long friendId) {
-        if (!userStorage.containsUser(userId)) {
-            throw new NotFoundException("Пользователь не найден по указанному ID");
-        }
+        userStorage.getUser(userId);
 
-        if (!userStorage.containsUser(friendId)) {
-            throw new NotFoundException("Друг не найден по указанному ID");
-        }
+        userStorage.getUser(friendId);
 
         userStorage.removeFriend(userId, friendId);
 
@@ -101,9 +81,7 @@ public class UserService {
     }
 
     public List<User> getAllFriends(long userId) {
-        if (!userStorage.containsUser(userId)) {
-            throw new NotFoundException("Пользователь не найден по указанному ID");
-        }
+        userStorage.getUser(userId);
 
         return userStorage.getAllFriends(userId);
     }

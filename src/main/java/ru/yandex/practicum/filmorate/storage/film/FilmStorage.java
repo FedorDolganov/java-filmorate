@@ -1,13 +1,15 @@
 package ru.yandex.practicum.filmorate.storage.film;
 
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.MPA;
 
 import java.util.Collection;
-import java.util.LinkedList;
+import java.util.List;
 
 public interface FilmStorage {
 
-    void addFilm(Film film);
+    Film addFilm(Film film);
 
     void updateFilm(long id, Film film);
 
@@ -19,8 +21,14 @@ public interface FilmStorage {
 
     void removeLike(long filmId, long userId);
 
-    LinkedList<Film> getListFilms(int count);
+    List<Film> getListFilms(int count);
 
-    boolean containsFilm(long filmId);
+    Collection<Genre> getAllGenres();
+
+    Genre getGenreById(long id);
+
+    Collection<MPA> getAllMPA();
+
+    MPA getMPAById(long id);
 
 }

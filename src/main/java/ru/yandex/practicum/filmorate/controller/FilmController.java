@@ -5,7 +5,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.film.FilmService;
 
 import java.util.Collection;
-import java.util.LinkedList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/films")
@@ -28,7 +28,7 @@ public class FilmController {
     }
 
     @GetMapping("/popular")
-    public LinkedList<Film> getPopularFilms(@RequestParam int count) {
+    public List<Film> getPopularFilms(@RequestParam int count) {
         return filmService.getPopularFilms(count);
     }
 
