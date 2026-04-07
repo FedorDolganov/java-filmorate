@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface UserStorage {
 
-    void addUser(User user);
+    User addUser(User user);
 
     void updateUser(long id, User user);
 
@@ -18,10 +18,6 @@ public interface UserStorage {
     void addFriend(long userId, long friendId);
 
     void removeFriend(long userId, long friendId);
-
-    boolean containsUser(long userId);
-
-    boolean containsUserFriend(long userId, long friendId);
 
     List<User> getAllFriends(long userId);
 
