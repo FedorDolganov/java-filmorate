@@ -219,7 +219,7 @@ class FilmorateApplicationTests {
     void createFilm_CreateFilm() throws Exception {
         Film film = Film.builder()
                 .name("nisi eiusmod")
-                .mpa(MPA.builder().id(0).name("G").build())
+                .mpa(MPA.builder().id(1).name("G").build())
                 .description("adipisicing")
                 .releaseDate(LocalDate.of(1967, Month.MARCH, 25))
                 .duration(100)
@@ -299,7 +299,7 @@ class FilmorateApplicationTests {
         Film film = Film.builder()
                 .name("nisi eiusmod")
                 .description("adipisicing")
-                .mpa(MPA.builder().id(0).name("G").build())
+                .mpa(MPA.builder().id(1).name("G").build())
                 .releaseDate(LocalDate.of(1967, Month.MARCH, 25))
                 .duration(100)
                 .build();
@@ -315,7 +315,7 @@ class FilmorateApplicationTests {
         Film updatedFilm = Film.builder()
                 .id(createdFilm.getId())
                 .name("Film Updated")
-                .mpa(MPA.builder().id(0).name("G").build())
+                .mpa(MPA.builder().id(1).name("G").build())
                 .description("New film update description")
                 .releaseDate(LocalDate.of(1989, Month.APRIL, 17))
                 .duration(190)
@@ -337,7 +337,7 @@ class FilmorateApplicationTests {
         Film film = Film.builder()
                 .name("nisi eiusmod")
                 .description("adipisicing")
-                .mpa(MPA.builder().id(0).name("G").build())
+                .mpa(MPA.builder().id(1).name("G").build())
                 .releaseDate(LocalDate.of(1967, Month.MARCH, 25))
                 .duration(100)
                 .build();
@@ -368,7 +368,7 @@ class FilmorateApplicationTests {
         Film film = Film.builder()
                 .name("nisi eiusmod")
                 .description("adipisicing")
-                .mpa(MPA.builder().id(0).name("G").build())
+                .mpa(MPA.builder().id(1).name("G").build())
                 .releaseDate(LocalDate.of(1967, Month.MARCH, 25))
                 .duration(100)
                 .build();
