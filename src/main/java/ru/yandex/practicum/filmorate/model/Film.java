@@ -4,15 +4,23 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Builder
 @Data
-public class Film {
+public class Film implements Comparable<Film> {
 
     private long id;
     private String name;
     private String description;
     private LocalDate releaseDate;
     private int duration;
+    private Set<Long> likes;
+    private String genre;
+    private String MPA;
 
+    @Override
+    public int compareTo(Film film) {
+        return film.getLikes().size() - this.getLikes().size();
+    }
 }

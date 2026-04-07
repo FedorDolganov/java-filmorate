@@ -10,7 +10,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.controller.UserController;
-import ru.yandex.practicum.filmorate.exeptions.ValidationException;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
+import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -75,7 +76,7 @@ class FilmorateApplicationTests {
                 .build();
 
         assertThrows(ValidationException.class, () -> {
-            userController.userPostMethod(user);
+            userController.createUser(user);
         });
     }
 
@@ -89,7 +90,7 @@ class FilmorateApplicationTests {
                 .build();
 
         assertThrows(ValidationException.class, () -> {
-            userController.userPostMethod(user);
+            userController.createUser(user);
         });
     }
 
@@ -103,7 +104,7 @@ class FilmorateApplicationTests {
                 .build();
 
         assertThrows(ValidationException.class, () -> {
-            userController.userPostMethod(user);
+            userController.createUser(user);
         });
     }
 
@@ -169,8 +170,8 @@ class FilmorateApplicationTests {
                 .build();
 
 
-        assertThrows(ValidationException.class, () -> {
-            userController.userPutMethod(updateUser);
+        assertThrows(NotFoundException.class, () -> {
+            userController.updateUser(updateUser);
         });
     }
 
@@ -243,7 +244,7 @@ class FilmorateApplicationTests {
                 .build();
 
         assertThrows(ValidationException.class, () -> {
-            filmController.filmPostMethod(film);
+            filmController.createFilm(film);
         });
     }
 
@@ -259,7 +260,7 @@ class FilmorateApplicationTests {
                 .build();
 
         assertThrows(ValidationException.class, () -> {
-            filmController.filmPostMethod(film);
+            filmController.createFilm(film);
         });
     }
 
@@ -273,7 +274,7 @@ class FilmorateApplicationTests {
                 .build();
 
         assertThrows(ValidationException.class, () -> {
-            filmController.filmPostMethod(film);
+            filmController.createFilm(film);
         });
     }
 
@@ -287,7 +288,7 @@ class FilmorateApplicationTests {
                 .build();
 
         assertThrows(ValidationException.class, () -> {
-            filmController.filmPostMethod(film);
+            filmController.createFilm(film);
         });
     }
 
@@ -352,8 +353,8 @@ class FilmorateApplicationTests {
                 .duration(190)
                 .build();
 
-        assertThrows(ValidationException.class, () -> {
-            filmController.filmPutMethod(updatedFilm);
+        assertThrows(NotFoundException.class, () -> {
+            filmController.updateFilm(updatedFilm);
         });
     }
 

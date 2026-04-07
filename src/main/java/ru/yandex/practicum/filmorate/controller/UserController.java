@@ -1,63 +1,62 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exeptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.user.UserService;
 
-import java.time.LocalDate;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
 
-    private final Logger log = LoggerFactory.getLogger(UserController.class);
-    private final HashMap<Long, User> users = new HashMap<>();
-    private int lastIndef = 1;
+    private UserService userService;
 
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping
-    public Collection<User> userGetMethod() {
-        return users.values();
+    public Collection<User> getAllUsers() {
+        return userService.getAllUsers();
+    }
+
+    @GetMapping("/{userId}")
+    public User getUser(@PathVariable long userId) {
+        return userService.getUser(userId);
+    }
+
+    @GetMapping("/{userId}/friends")
+    public List<User> getAllFriends(@PathVariable long userId) {
+        return userService.getAllFriends(userId);
+    }
+
+    @GetMapping("/{userId}/friends/common/{friendId}")
+    public List<User> getAllFriends(@PathVariable long userId, @PathVariable long friendId) {
+        return userService.getCommonFriends(userId, friendId);
     }
 
     @PostMapping
-    public User userPostMethod(@RequestBody User user) {
-        if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
-            throw new ValidationException(log, "Неверные данные создания пользователя: Неверные данные почты");
-        }
-
-        if (user.getLogin() == null || user.getLogin().isBlank() || user.getLogin().contains(" ")) {
-            throw new ValidationException(log, "Неверные данные создания пользователя: Неверные данные логина");
-        }
-
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
-
-        if (user.getBirthday() == null || user.getBirthday().isAfter(LocalDate.now())) {
-            throw new ValidationException(log, "Неверные данные создания пользователя: Неверные данные дня рождения");
-        }
-
-        user.setId(lastIndef);
-        lastIndef++;
-        log.info("Добавлен новый пользователь {}!", user.getName());
-        users.put(user.getId(), user);
-        return user;
+    @ResponseStatus(HttpStatus.CREATED)
+    public User createUser(@RequestBody User user) {
+        return userService.createUser(user);
     }
 
     @PutMapping
-    public User userPutMethod(@RequestBody User user) {
-        if (users.containsKey(user.getId())) {
-            users.put(user.getId(), user);
-            log.info("Пользователь {} обновлён!", user.getName());
-            return user;
-        } else {
-            throw new ValidationException(log, "Неверные данные обновления пользователя: В базе данных нет пользователя с таким индефикатором");
-        }
+    public User updateUser(@RequestBody User user) {
+        return userService.updateUser(user);
+    }
+
+    @PutMapping("/{userId}/friends/{friendId}")
+    public User addFriend(@PathVariable long userId, @PathVariable long friendId) {
+        return userService.addFriend(userId, friendId);
+    }
+
+    @DeleteMapping("/{userId}/friends/{friendId}")
+    public User removeFriend(@PathVariable long userId, @PathVariable long friendId) {
+        return userService.removeFriend(userId, friendId);
     }
 
 }
