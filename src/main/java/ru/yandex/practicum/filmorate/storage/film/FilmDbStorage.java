@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.storage.film;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -16,7 +15,6 @@ import ru.yandex.practicum.filmorate.model.MPA;
 import java.util.*;
 
 @Component("dbFilm")
-@RequiredArgsConstructor
 @Repository
 public class FilmDbStorage implements FilmStorage {
 
@@ -26,6 +24,19 @@ public class FilmDbStorage implements FilmStorage {
     private final MpaMapper mpaMapper;
     private final GenreMapper genreMapper;
 
+    public FilmDbStorage(JdbcTemplate jdbc, FilmMapper filmMapper, MpaMapper mpaMapper, GenreMapper genreMapper) {
+        this.jdbc = jdbc;
+        this.filmMapper = filmMapper;
+        this.mpaMapper = mpaMapper;
+        this.genreMapper = genreMapper;
+
+        try {
+            this.lastID = jdbc.queryForObject(
+                    "SELECT MAX(id) FROM films",
+                    Long.class
+            ) + 1;
+        } catch (NullPointerException ignored) {}
+    }
 
     @Override
     public Film addFilm(Film film) {

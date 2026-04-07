@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -15,7 +14,6 @@ import java.util.List;
 import java.util.Set;
 
 @Component("dbUser")
-@RequiredArgsConstructor
 @Repository
 public class UserDbStorage implements UserStorage {
 
@@ -24,6 +22,17 @@ public class UserDbStorage implements UserStorage {
 
     private long lastID = 1;
 
+    public UserDbStorage(JdbcTemplate jdbc, UserMapper userMapper) {
+        this.jdbc = jdbc;
+        this.userMapper = userMapper;
+
+        try {
+            this.lastID = jdbc.queryForObject(
+                    "SELECT MAX(id) FROM users",
+                    Long.class
+            ) + 1;
+        } catch (NullPointerException ignored) {}
+    }
 
     @Override
     public User addUser(User user) {
