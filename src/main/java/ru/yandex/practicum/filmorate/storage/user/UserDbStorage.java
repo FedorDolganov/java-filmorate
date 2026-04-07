@@ -31,7 +31,9 @@ public class UserDbStorage implements UserStorage {
                     "SELECT MAX(id) FROM users",
                     Long.class
             ) + 1;
-        } catch (NullPointerException ignored) {}
+        } catch (NullPointerException ignored) {
+
+        }
     }
 
     @Override

@@ -35,7 +35,9 @@ public class FilmDbStorage implements FilmStorage {
                     "SELECT MAX(id) FROM films",
                     Long.class
             ) + 1;
-        } catch (NullPointerException ignored) {}
+        } catch (NullPointerException ignored) {
+
+        }
     }
 
     @Override
