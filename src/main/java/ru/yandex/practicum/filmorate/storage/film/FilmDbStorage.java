@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.film;
 
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.relational.core.sql.In;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
@@ -11,8 +12,10 @@ import ru.yandex.practicum.filmorate.mappers.MpaMapper;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MPA;
+import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component("dbFilm")
 @Repository
@@ -117,16 +120,22 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> getListFilms(int count) {
-        return jdbc.query(
+        List<Film> films = jdbc.query(
                 "SELECT f.id, f.name, f.description, f.releaseDate, f.duration, f.mpa, COUNT(DISTINCT l.user_id) AS likes_count FROM films f LEFT JOIN likes l ON f.id = l.film_id GROUP BY f.id, f.name, f.description, f.releaseDate, f.duration, f.mpa ORDER BY likes_count DESC LIMIT 10",
                 filmMapper
-        ).stream()
-                .peek(film -> {
-                    film.setLikes(getLikes(film.getId()));
-                    film.setGenres(getGenres(film.getId()));
-                    film.setMpa(getMPAById(film.getMpa().getId()));
-                })
-                .toList();
+        );
+
+        Map<Long, Set<Genre>> allGenres = getMapGenresIds(films);
+        Map<Long, Set<Long>> allLikes = getMapLikes(films);
+        Map<Long, MPA> allMPAs = getMapMPAs(films);
+
+        films.forEach(film -> {
+            film.setGenres(new LinkedHashSet<>(allGenres.getOrDefault(film.getId(), new HashSet<>())));
+            film.setLikes(allLikes.getOrDefault(film.getId(), new HashSet<>()));
+            film.setMpa(allMPAs.getOrDefault(film.getId(), MPA.builder().id(1).name("Боевик").build()));
+        });
+
+        return films;
     }
 
     @Override
@@ -197,6 +206,57 @@ public class FilmDbStorage implements FilmStorage {
         return new LinkedHashSet<>(genres);
     }
 
+    private Map<Long, Set<Genre>> getMapGenresIds(List<Film> films) {
+        String ids = films.stream()
+                .map(u -> String.valueOf(u.getId()))
+                .collect(Collectors.joining(","));
+
+        return jdbc.query(
+                "SELECT fg.film_id as filmId, fg.genre_id as id, g.genre as name FROM filmGenres fg JOIN genres g ON fg.genre_id = g.id WHERE fg.film_id IN (" + ids + ") ORDER BY fg.film_id, g.id",
+                rs -> {
+                    Map<Long, Set<Genre>> map = new HashMap<>();
+                    while (rs.next()) {
+                        map.computeIfAbsent(rs.getLong("filmId"), k -> new HashSet<>()).add(Genre.builder().id(rs.getInt("id")).name(rs.getString("name")).build());
+                    }
+                    return map;
+                }
+        );
+    }
+
+    private Map<Long, Set<Long>> getMapLikes(List<Film> films) {
+        String ids = films.stream()
+                .map(u -> String.valueOf(u.getId()))
+                .collect(Collectors.joining(","));
+
+        return jdbc.query(
+                "SELECT film_id, user_id FROM likes WHERE film_id IN (" + ids + ")",
+                rs -> {
+                    Map<Long, Set<Long>> map = new HashMap<>();
+                    while (rs.next()) {
+                        map.computeIfAbsent(rs.getLong("film_id"), k -> new HashSet<>()).add(rs.getLong("user_id"));
+                    }
+                    return map;
+                }
+        );
+    }
+
+    private Map<Long, MPA> getMapMPAs(List<Film> films) {
+        String ids = films.stream()
+                .map(u -> String.valueOf(u.getId()))
+                .collect(Collectors.joining(","));
+
+        return jdbc.query(
+                "SELECT f.id as filmId, m.id as mpaid, m.mpa as mpaname FROM films f JOIN mpas m ON m.id = f.mpa WHERE f.id IN (" + ids + ")",
+                rs -> {
+                    Map<Long, MPA> map = new HashMap<>();
+                    while (rs.next()) {
+                        map.put(rs.getLong("filmId"), MPA.builder().id(rs.getInt("mpaid")).name(rs.getString("mpaname")).build());
+                    }
+                    return map;
+                }
+        );
+    }
+
     private void saveGenres(long filmId, LinkedHashSet<Genre> genres) {
         if (genres == null) {
             return;
@@ -206,12 +266,15 @@ public class FilmDbStorage implements FilmStorage {
             return;
         }
 
+        String sql = "INSERT INTO filmGenres(film_id, genre_id) VALUES (?, ?)";
+
+        List<Object[]> batchArgs = new ArrayList<>();
+
         for (Genre genre : genres) {
-            jdbc.update(
-                    "INSERT INTO filmGenres(film_id, genre_id) VALUES (?, ?)",
-                    filmId, genre.getId()
-            );
+            batchArgs.add(new Object[]{filmId, genre.getId()});
         }
+
+        jdbc.batchUpdate(sql, batchArgs);
     }
 
 }

@@ -6,12 +6,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.mappers.UserMapper;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Component("dbUser")
 @Repository
@@ -105,28 +104,53 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public List<User> getAllFriends(long userId) {
-        return jdbc.query(
-            "SELECT u.id, u.name, u.login, u.email, u.birthday FROM friends f JOIN users u ON u.id = f.friend_id WHERE f.user_id = ?",
-            userMapper,
-            userId
-        ).stream()
-        .peek(user -> {
-            user.setFriends(getFriendsIds(user.getId()));
-        })
-        .toList();
+        List<User> users = jdbc.query(
+                "SELECT u.id, u.name, u.login, u.email, u.birthday FROM friends f JOIN users u ON u.id = f.friend_id WHERE f.user_id = ?",
+                userMapper,
+                userId
+        );
+
+        Map<Long, Set<Long>> mapFriends = getMapFriendsIds(users);
+
+        users.forEach(user ->
+                user.setFriends(mapFriends.getOrDefault(user.getId(), new HashSet<>()))
+        );
+
+        return users;
     }
 
     @Override
     public List<User> getCommonFriends(long userId, long friendId) {
-        return jdbc.query(
+        List<User> users = jdbc.query(
                 "SELECT u.id, u.name, u.login, u.email, u.birthday FROM friends f1 JOIN friends f2 ON f1.friend_id = f2.friend_id JOIN users u ON u.id = f1.friend_id WHERE f1.user_id = ? AND f2.user_id = ?",
                 userMapper,
                 userId, friendId
-        ).stream()
-        .peek(user -> {
-            user.setFriends(getFriendsIds(user.getId()));
-        })
-        .toList();
+        );
+
+        Map<Long, Set<Long>> mapFriends = getMapFriendsIds(users);
+
+        users.forEach(user ->
+                user.setFriends(mapFriends.getOrDefault(user.getId(), new HashSet<>()))
+        );
+
+        return users;
+    }
+
+    private Map<Long, Set<Long>> getMapFriendsIds(List<User> users) {
+        String ids = users.stream()
+                .map(u -> String.valueOf(u.getId()))
+                .collect(Collectors.joining(","));
+
+        return jdbc.query(
+                "SELECT user_id, friend_id FROM friends WHERE user_id IN (" + ids + ")",
+                rs -> {
+                    Map<Long, Set<Long>> map = new HashMap<>();
+                    while (rs.next()) {
+                        map.computeIfAbsent(rs.getLong("user_id"), k -> new HashSet<>()).add(rs.getLong("friend_id"));
+                    }
+                    return map;
+                }
+        );
     }
 
     private Set<Long> getFriendsIds(long userId) {

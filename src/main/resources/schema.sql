@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS films (
   id integer PRIMARY KEY,
-  name varchar,
-  description varchar,
+  name varchar(100),
+  description varchar(200),
   releaseDate date,
   duration integer,
   mpa integer
@@ -9,9 +9,9 @@ CREATE TABLE IF NOT EXISTS films (
 
 CREATE TABLE IF NOT EXISTS users (
   id integer PRIMARY KEY,
-  email varchar,
-  login varchar,
-  name varchar,
+  email varchar(50),
+  login varchar(50),
+  name varchar(50),
   birthday date
 );
 
@@ -22,12 +22,12 @@ CREATE TABLE IF NOT EXISTS filmGenres (
 
 CREATE TABLE IF NOT EXISTS genres (
   id integer PRIMARY KEY,
-  genre varchar
+  genre varchar(50)
 );
 
 CREATE TABLE IF NOT EXISTS mpas (
   id integer PRIMARY KEY,
-  mpa varchar
+  mpa varchar(30)
 );
 
 CREATE TABLE IF NOT EXISTS likes (
